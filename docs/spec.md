@@ -129,3 +129,13 @@ Content extraction happens inside the summary job (deferred extraction). If wait
 ### 4.3 Reading an Article
 
 - Opening the article page, or following the original article link from either the list or the article page, marks the article as read.
+
+## 5. Decisions
+
+Each decision and its reasoning lives in its own file under `docs/adr/`:
+
+1. [Public multi-user service with bring-your-own-key](adr/0001-public-multi-user-service-with-byok.md)
+2. [Google sign-in as the only authentication method](adr/0002-google-sign-in-only.md)
+3. [Feeds and articles are owned per user](adr/0003-per-user-feeds-and-articles.md)
+4. [Summary is its own model, kept per language](adr/0004-summary-as-its-own-model-per-language.md)
+5. [Extract article content lazily, at summarisation time](adr/0005-extract-article-content-lazily.md)
