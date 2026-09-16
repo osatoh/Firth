@@ -1,28 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Sessions", type: :request do
-  let(:auth_hash) do
-    OmniAuth::AuthHash.new(
-      provider: "google_oauth2",
-      uid: "google-uid-1",
-      info: { email: "user@example.com", name: "Test User" }
-    )
-  end
-
-  before do
-    OmniAuth.config.test_mode = true
-    OmniAuth.config.mock_auth[:google_oauth2] = auth_hash
-  end
-
-  after do
-    OmniAuth.config.mock_auth[:google_oauth2] = nil
-    OmniAuth.config.test_mode = false
-  end
-
-  def sign_in_with_google
-    post "/auth/google_oauth2"
-    follow_redirect!
-  end
+  include GoogleSignIn
 
   describe "サインイン" do
     it "初回サインインでユーザーを作成し、セッションに保存する" do
