@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
-  # ランディングはサインインしていない訪問者の受け口なので認証を求めない。
-  # ここに増えるページは既定どおり認証必須にしたいので only: を付けている。
+  # The landing page is where signed-out visitors arrive, so it does not require a sign-in.
+  # only: keeps that exception to this one action: any page added here stays signed-in only.
   skip_before_action :require_sign_in, only: :landing
 
   def landing

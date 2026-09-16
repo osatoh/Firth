@@ -1,14 +1,14 @@
 class SessionsController < ApplicationController
-  # サインインの前後を扱うコントローラなので、認証を求めない。
+  # This controller handles both sides of signing in, so it does not require a sign-in.
   skip_before_action :require_sign_in
 
-  # OmniAuth のコールバック。CSRF トークンは Google からの POST には載らないため検証しない
-  # (リクエストフェーズは omniauth-rails_csrf_protection で保護している)。
+  # The OmniAuth callback. Google's POST carries no CSRF token, so the check is skipped here
+  # (the request phase is protected by omniauth-rails_csrf_protection).
   skip_forgery_protection only: :create
 
   def create
     user = User.find_or_initialize_by(google_uid: auth[:uid])
-    # サインインのたびに Google 側の最新のメールアドレスと名前を反映する
+    # Pick up the latest email and name from Google on every sign-in.
     user.update!(email: auth[:info][:email], name: auth[:info][:name])
 
     reset_session

@@ -1,4 +1,4 @@
-# request spec から Google サインインを踏むための共有ヘルパー。
+# A shared helper for going through Google sign-in from a request spec.
 module GoogleSignIn
   extend ActiveSupport::Concern
 

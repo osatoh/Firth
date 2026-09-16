@@ -1,10 +1,10 @@
 require "rails_helper"
 
-RSpec.describe "サインインの要求", type: :request do
-  # ランディングと認証まわり以外の「普通のページ」の代わりとして、
-  # ApplicationController を継承したコントローラとルートをこの spec の中だけで用意する。
+RSpec.describe "Requiring a sign-in", type: :request do
+  # Stand in for an ordinary page (one that is neither the landing page nor an auth endpoint)
+  # with a controller inheriting from ApplicationController, and a route, local to this spec.
   around do |example|
-    # 遅延ロードのままだと下の draw でアプリ本来のルートが失われるので、先に読み込ませる。
+    # Load the real routes first: left lazy, the draw below would wipe them out.
     Rails.application.reload_routes_unless_loaded
 
     Rails.application.routes.disable_clear_and_finalize = true
@@ -26,18 +26,18 @@ RSpec.describe "サインインの要求", type: :request do
     end)
   end
 
-  context "サインインしていないとき" do
-    it "ランディングへリダイレクトする" do
+  context "when signed out" do
+    it "redirects to the landing page" do
       get "/spec/protected"
 
       expect(response).to redirect_to(root_path)
     end
   end
 
-  context "サインインしているとき" do
+  context "when signed in" do
     include GoogleSignIn
 
-    it "そのページを表示する" do
+    it "renders the page" do
       sign_in_with_google
 
       get "/spec/protected"
