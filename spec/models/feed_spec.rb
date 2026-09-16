@@ -49,6 +49,40 @@ RSpec.describe Feed, type: :model do
       expect(feed.errors).to be_of_kind(:url, :taken)
     end
 
+    # RFC 3986: the scheme and host are case-insensitive, and for http(s)
+    # an empty path is equivalent to "/".
+    it "treats a URL that differs only by scheme or host case as a duplicate" do
+      user = create(:user)
+      create(:feed, user:, url: "https://example.com/feed.xml")
+
+      feed = build(:feed, user:, url: "HTTPS://EXAMPLE.com/feed.xml")
+
+      expect(feed).to be_invalid
+      expect(feed.errors).to be_of_kind(:url, :taken)
+    end
+
+    it "treats an empty path and \"/\" as the same URL" do
+      user = create(:user)
+      create(:feed, user:, url: "https://example.com")
+
+      feed = build(:feed, user:, url: "https://example.com/")
+
+      expect(feed).to be_invalid
+      expect(feed.errors).to be_of_kind(:url, :taken)
+    end
+
+    it "stores the normalized URL" do
+      feed = create(:feed, url: "HTTPS://EXAMPLE.com")
+
+      expect(feed.url).to eq("https://example.com/")
+    end
+
+    it "keeps the path as given, since paths are case-sensitive" do
+      feed = create(:feed, url: "https://example.com/Feed.xml")
+
+      expect(feed.url).to eq("https://example.com/Feed.xml")
+    end
+
     it "allows another user to register the same URL" do
       create(:feed, url: "https://example.com/feed.xml")
 
