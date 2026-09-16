@@ -1,0 +1,10 @@
+<div>
+  <h1>Firth</h1>
+  <p>AI 要約付きの RSS リーダーです。</p>
+
+  <% if signed_in? %>
+    <%= button_to "サインアウト", sign_out_path, method: :delete %>
+  <% else %>
+    <%= button_to "Google でサインイン", "/auth/google_oauth2", data: { turbo: false } %>
+  <% end %>
+</div>
