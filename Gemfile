@@ -33,6 +33,14 @@ gem "kamal", require: false
 # Add HTTP asset caching/compression and X-Sendfile acceleration to Puma [https://github.com/basecamp/thruster/]
 gem "thruster", require: false
 
+# json 3.0 は ActiveSupport 8.1 のメッセージ復号 (JSON.parse の引数) と非互換なため 2 系に固定する
+gem "json", "~> 2.9"
+
+# Google sign-in [https://github.com/zquestz/omniauth-google-oauth2]
+gem "omniauth-google-oauth2"
+# OmniAuth のリクエストフェーズを CSRF から保護する [https://github.com/cookpad/omniauth-rails_csrf_protection]
+gem "omniauth-rails_csrf_protection"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
