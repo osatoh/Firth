@@ -1,4 +1,7 @@
 class SessionsController < ApplicationController
+  # サインインの前後を扱うコントローラなので、認証を求めない。
+  skip_before_action :require_sign_in
+
   # OmniAuth のコールバック。CSRF トークンは Google からの POST には載らないため検証しない
   # (リクエストフェーズは omniauth-rails_csrf_protection で保護している)。
   skip_forgery_protection only: :create
@@ -11,17 +14,17 @@ class SessionsController < ApplicationController
     reset_session
     session[:user_id] = user.id
 
-    redirect_to "/", notice: "サインインしました。"
+    redirect_to root_path, notice: "サインインしました。"
   end
 
   def destroy
     reset_session
 
-    redirect_to "/", notice: "サインアウトしました。"
+    redirect_to root_path, notice: "サインアウトしました。"
   end
 
   def failure
-    redirect_to "/", alert: "サインインできませんでした。"
+    redirect_to root_path, alert: "サインインできませんでした。"
   end
 
   private
