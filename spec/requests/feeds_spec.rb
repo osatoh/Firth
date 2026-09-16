@@ -65,6 +65,17 @@ RSpec.describe "Feeds", type: :request do
         expect(response.body).to include("フィードを追加しました。")
       end
 
+      # Two concurrent requests can both clear the uniqueness validation and
+      # reach the unique index. The loser must not see a 500.
+      it "re-renders the form when the unique index rejects the insert" do
+        allow_any_instance_of(Feed).to receive(:save).and_raise(ActiveRecord::RecordNotUnique.new("duplicate key"))
+
+        post feeds_path, params: { feed: { title: "Example Blog", url: "https://example.com/feed.xml" } }
+
+        expect(response).to have_http_status(422)
+        expect(response.body).to include("URL")
+      end
+
       it "rejects an invalid URL and re-renders the form" do
         expect {
           post feeds_path, params: { feed: { title: "Example Blog", url: "not a url" } }
@@ -82,6 +93,15 @@ RSpec.describe "Feeds", type: :request do
 
         expect(response).to redirect_to(feeds_path)
         expect(feed.reload.title).to eq("New Name")
+      end
+
+      it "re-renders the form when the unique index rejects the update" do
+        feed = create(:feed, user:)
+        allow_any_instance_of(Feed).to receive(:update).and_raise(ActiveRecord::RecordNotUnique.new("duplicate key"))
+
+        patch feed_path(feed), params: { feed: { url: "https://example.com/other.xml" } }
+
+        expect(response).to have_http_status(422)
       end
 
       it "does not update when the URL is invalid" do
