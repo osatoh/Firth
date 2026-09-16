@@ -1,0 +1,26 @@
+<%= form_with model: feed, class: "contents" do |form| %>
+  <% if feed.errors.any? %>
+    <div class="mb-6 rounded-md bg-red-50 px-4 py-3 text-red-700">
+      <ul class="list-disc list-inside">
+        <% feed.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-4">
+    <%= form.label :title, "タイトル", class: "block font-medium mb-1" %>
+    <%= form.text_field :title, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div class="mb-6">
+    <%= form.label :url, "RSS の URL", class: "block font-medium mb-1" %>
+    <%= form.url_field :url, class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <%= form.submit class: "rounded-md px-4 py-2 bg-gray-900 text-white font-medium cursor-pointer" %>
+    <%= link_to "フィード一覧へ戻る", feeds_path, class: "text-gray-700 underline" %>
+  </div>
+<% end %>

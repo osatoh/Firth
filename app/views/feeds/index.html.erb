@@ -1,0 +1,29 @@
+<% content_for :title, "フィード" %>
+
+<div class="w-full">
+  <div class="flex items-center justify-between mb-6">
+    <h1 class="text-2xl font-bold">フィード</h1>
+    <%= link_to "フィードを追加", new_feed_path, class: "rounded-md px-4 py-2 bg-gray-900 text-white font-medium" %>
+  </div>
+
+  <% if @feeds.empty? %>
+    <p class="text-gray-500">まだフィードがありません。</p>
+  <% else %>
+    <ul class="divide-y divide-gray-200">
+      <% @feeds.each do |feed| %>
+        <li class="py-4 flex items-center justify-between gap-4">
+          <div class="min-w-0">
+            <p class="font-medium truncate"><%= feed.title %></p>
+            <p class="text-sm text-gray-500 truncate"><%= feed.url %></p>
+          </div>
+          <div class="flex items-center gap-3 shrink-0">
+            <%= link_to "編集", edit_feed_path(feed), class: "text-gray-700 underline" %>
+            <%= button_to "削除", feed_path(feed), method: :delete,
+                  class: "text-red-700 underline",
+                  form: { data: { turbo_confirm: "#{feed.title} を削除しますか？" } } %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>
