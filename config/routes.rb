@@ -15,5 +15,8 @@ Rails.application.routes.draw do
   get "auth/failure", to: "sessions#failure"
   delete "sign_out", to: "sessions#destroy", as: :sign_out
 
+  # No feed page of its own: the list is the only view onto a feed.
+  resources :feeds, except: :show
+
   root "pages#landing"
 end
