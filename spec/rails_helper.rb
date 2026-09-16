@@ -35,7 +35,7 @@ rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
 RSpec.configure do |config|
-  # FactoryBot のメソッドを create(:user) のように直接呼べるようにする
+  # Let examples call FactoryBot methods directly, as in create(:user)
   config.include FactoryBot::Syntax::Methods
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures

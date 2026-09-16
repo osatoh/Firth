@@ -5,14 +5,14 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  # ランディングと認証まわり以外の全ページはサインインを必須にする。
+  # Every page but the landing page and the auth endpoints requires a signed-in user.
   before_action :require_sign_in
 
   helper_method :signed_in?
 
   private
     def current_user
-      # nil もメモ化する。サインアウト状態でリクエストごとに空クエリを撃たないため。
+      # Memoize nil as well, so a signed-out request does not query for a user every time.
       return @current_user if defined?(@current_user)
 
       @current_user = session[:user_id] && User.find_by(id: session[:user_id])

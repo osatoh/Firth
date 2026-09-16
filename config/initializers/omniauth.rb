@@ -1,6 +1,6 @@
-# Google サインインの設定。
-# クライアント ID とシークレットは Rails credentials から読む
-# (bin/rails credentials:edit で google_oauth2.client_id / client_secret を設定する)。
+# Google sign-in setup.
+# The client ID and secret come from the Rails credentials
+# (set google_oauth2.client_id / client_secret with bin/rails credentials:edit).
 Rails.application.config.middleware.use OmniAuth::Builder do
   google_credentials = Rails.application.credentials.google_oauth2 || {}
 
@@ -10,5 +10,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            scope: "email,profile"
 end
 
-# 認証失敗時は例外を投げず、失敗エンドポイントへ回す。
+# On an authentication failure, hand off to the failure endpoint instead of raising.
 OmniAuth.config.on_failure = OmniAuth::FailureEndpoint
