@@ -1,7 +1,7 @@
 # Firth Specification
 
-> Status: Draft. Built up step by step:
-> 1. Scope & users (this revision)
+> Status: Drafted through all six steps. Revise as the app gets built and used.
+> 1. Scope & users
 > 2. User stories / use cases
 > 3. Domain model
 > 4. Key flows
@@ -129,3 +129,69 @@ Content extraction happens inside the summary job (deferred extraction). If wait
 ### 4.3 Reading an Article
 
 - Opening the article page, or following the original article link from either the list or the article page, marks the article as read.
+
+## 5. Decisions
+
+Each decision and its reasoning lives in its own file under `docs/adr/`:
+
+1. [Public multi-user service with bring-your-own-key](adr/0001-public-multi-user-service-with-byok.md)
+2. [Google sign-in as the only authentication method](adr/0002-google-sign-in-only.md)
+3. [Feeds and articles are owned per user](adr/0003-per-user-feeds-and-articles.md)
+4. [Summary is its own model, kept per language](adr/0004-summary-as-its-own-model-per-language.md)
+5. [Extract article content lazily, at summarisation time](adr/0005-extract-article-content-lazily.md)
+
+## 6. Task Breakdown
+
+Ordered so that each task leaves the app working. The aim is to reach a usable reader early (Phase 2), then add AI summaries, then the rest.
+
+### Phase 0: Foundation
+
+| # | Task | Done when |
+|---|---|---|
+| 0.1 | Add RSpec | `rspec-rails` installed, `spec/` generated, `bundle exec rspec` passes |
+| 0.2 | Add a test job to CI | CI starts PostgreSQL and runs RSpec on every push |
+| 0.3 | Set up the database and local development | `bin/setup` and `bin/dev` bring up the app locally |
+
+### Phase 1: Accounts
+
+| # | Task | Done when |
+|---|---|---|
+| 1.1 | `User` model | Stores Google account id, email, name; migration and model specs pass |
+| 1.2 | Google sign-in | Sign in, sign out, and a session that survives a reload; a first sign-in creates the user |
+| 1.3 | Require sign-in | Every page except the landing and auth pages redirects signed-out visitors |
+
+### Phase 2: Reading (usable reader)
+
+| # | Task | Done when |
+|---|---|---|
+| 2.1 | `Feed` model and CRUD | A signed-in user can add, edit and delete feeds; invalid URLs are rejected |
+| 2.2 | `Article` model and feed fetching job | Fetching a feed stores its new entries and skips ones already stored |
+| 2.3 | Recurring fetch every 15 minutes | Solid Queue recurring job enqueues a fetch job per feed |
+| 2.4 | Article list | All feeds' articles, newest first, with a link to the original article |
+| 2.5 | Article page | Title, feed, published date, original link |
+| 2.6 | Read / unread state | Opening the article page or following the original link marks it read |
+
+At the end of Phase 2 the app is usable daily as a plain RSS reader.
+
+### Phase 3: AI Summaries
+
+| # | Task | Done when |
+|---|---|---|
+| 3.1 | API key and summary language settings | Key is stored encrypted, shown masked, and can be replaced or deleted |
+| 3.2 | Article content extraction | Given an article URL, the full text is extracted; failures are reported, not raised |
+| 3.3 | `Summary` model | One summary per article per language, with pending / done / failed states |
+| 3.4 | Summarisation job | Extracts content, calls the Claude API with the user's key, stores the result or the failure reason |
+| 3.5 | Summarise button and live update | Pressing it enqueues the job, and the result appears via Turbo Stream without a reload |
+| 3.6 | Reuse and guidance | An existing summary in the current language is shown without an API call; a missing API key guides the user to settings |
+
+### Phase 4: Operations and the Rest
+
+| # | Task | Done when |
+|---|---|---|
+| 4.1 | Per-user feed limit | Adding a feed beyond the limit is refused with a clear reason |
+| 4.2 | Account deletion | Deleting an account removes the user and all their feeds, articles and summaries |
+| 4.3 | OPML import | Uploading an OPML file creates the feeds it lists, within the feed limit |
+| 4.4 | Onboarding prompt | After the first sign-in, the user is prompted to add an API key and language, and can skip |
+| 4.5 | Deploy to AWS with Kamal | `config/deploy.yml` targets the AWS host and a manual deploy succeeds |
+| 4.6 | Deploy from GitHub Actions | Merging to `main` deploys, with secrets stored in GitHub |
+| 4.7 | Landing page and README | A signed-out visitor understands what Firth is; the README matches the built app |
