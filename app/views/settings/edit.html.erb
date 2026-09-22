@@ -1,0 +1,36 @@
+<% content_for :title, t(".title") %>
+
+<div class="w-full max-w-lg">
+  <h1 class="text-2xl font-bold mb-6"><%= t(".title") %></h1>
+
+  <%= form_with model: @user, url: settings_path, method: :patch, class: "contents" do |form| %>
+    <%= render "errors", record: @user %>
+
+    <div class="mb-4">
+      <%= form.label :anthropic_api_key, class: "block font-medium mb-1" %>
+      <p class="mb-2 text-gray-700">
+        <%= @masked_api_key ? t(".api_key_stored", key: @masked_api_key) : t(".api_key_missing") %>
+      </p>
+      <%# The stored key is never rendered back: the field always starts empty. %>
+      <%= form.password_field :anthropic_api_key, value: nil, autocomplete: "off", placeholder: t(".api_key_placeholder"),
+            class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+      <p class="mt-1 text-sm text-gray-500"><%= t(".api_key_hint") %></p>
+    </div>
+
+    <div class="mb-6">
+      <%= form.label :summary_language, class: "block font-medium mb-1" %>
+      <%= form.select :summary_language, User::SUMMARY_LANGUAGES.map { |code| [ t(".languages.#{code}"), code ] }, {},
+            class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+    </div>
+
+    <div class="mb-6">
+      <%= form.submit t(".save"), class: "rounded-md px-4 py-2 bg-gray-900 text-white font-medium cursor-pointer" %>
+    </div>
+  <% end %>
+
+  <% if @masked_api_key %>
+    <%= button_to t(".delete_api_key"), settings_api_key_path, method: :delete,
+          form: { data: { turbo_confirm: t(".confirm_delete_api_key") } },
+          class: "text-red-700 underline cursor-pointer" %>
+  <% end %>
+</div>

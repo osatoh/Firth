@@ -87,4 +87,14 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+
+  # Active Record Encryption keys (generate with `bin/rails db:encryption:init`). Read from
+  # the environment when set; otherwise Rails falls back to credentials.active_record_encryption.
+  {
+    primary_key: "ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY",
+    deterministic_key: "ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY",
+    key_derivation_salt: "ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT"
+  }.each do |name, env|
+    config.active_record.encryption.public_send("#{name}=", ENV[env]) if ENV[env].present?
+  end
 end

@@ -19,9 +19,18 @@ ja:
         email: "メールアドレス"
         google_uid: "Google UID"
         name: "名前"
+        anthropic_api_key: "Claude API キー"
+        summary_language: "要約の言語"
+    errors:
+      models:
+        user:
+          attributes:
+            anthropic_api_key:
+              anthropic_prefix: "は sk-ant- で始まる必要があります"
   nav:
     articles: "記事"
     feeds: "フィード"
+    settings: "設定"
     sign_out: "サインアウト"
   application:
     require_sign_in:
@@ -53,6 +62,26 @@ ja:
       title: "フィードを編集"
     form:
       back: "フィード一覧へ戻る"
+  settings:
+    edit:
+      title: "設定"
+      api_key_stored: "保存済みのキー: %{key}"
+      api_key_missing: "API キーは未設定です。"
+      api_key_placeholder: "sk-ant-..."
+      api_key_hint: "入れ替えるときだけ入力してください。空欄のままなら今のキーを使い続けます。"
+      save: "保存"
+      delete_api_key: "API キーを削除"
+      confirm_delete_api_key: "API キーを削除しますか？"
+      languages:
+        ja: "日本語"
+        en: "英語"
+        zh: "中国語"
+        ko: "韓国語"
+    update:
+      notice: "設定を保存しました。"
+    api_keys:
+      destroy:
+        notice: "API キーを削除しました。"
   articles:
     index:
       title: "記事"
