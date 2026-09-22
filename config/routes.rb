@@ -17,7 +17,10 @@ Rails.application.routes.draw do
 
   # No feed page of its own: the list is the only view onto a feed.
   resources :feeds, except: :show
-  resources :articles, only: %i[index show]
+  resources :articles, only: %i[index show] do
+    # POST, not GET, so link prefetchers and cross-site requests cannot mark articles read.
+    post :visit, on: :member
+  end
 
   root "pages#landing"
 end

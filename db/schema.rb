@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_132437) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_134412) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,6 +19,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_132437) do
     t.bigint "feed_id", null: false
     t.string "guid", null: false
     t.datetime "published_at"
+    t.datetime "read_at"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.string "url", null: false
