@@ -30,6 +30,15 @@ RSpec.describe OpmlImport do
     expect(result).to have_attributes(added: 2, duplicate: 1, invalid: 1, over_limit: 0)
   end
 
+  it "counts a feed that loses a race at the unique index as a duplicate" do
+    create(:feed, user:, url: "https://example.com/feed.xml")
+    allow_any_instance_of(ActiveRecord::Validations::UniquenessValidator).to receive(:validate_each)
+
+    result = import("subscriptions.opml")
+
+    expect(result).to have_attributes(added: 2, duplicate: 1, invalid: 1, over_limit: 0)
+  end
+
   it "stops at the feed limit and counts the rest" do
     stub_const("Feed::LIMIT_PER_USER", 2)
     create(:feed, user:)

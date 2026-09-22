@@ -28,7 +28,7 @@ class OpmlImport
     entries.each_with_index do |(title, url), index|
       feed = @user.feeds.new(title:, url:)
 
-      if save(feed)
+      if feed.save
         counts[:added] += 1
       elsif feed.errors.of_kind?(:base, :limit_reached)
         # Nothing after this fits either, so stop instead of trying each one.
@@ -45,15 +45,6 @@ class OpmlImport
   end
 
   private
-    # A concurrent create can clear the uniqueness validation and lose at the
-    # unique index; report it as a duplicate, as FeedsController#create does.
-    def save(feed)
-      feed.save
-    rescue ActiveRecord::RecordNotUnique
-      feed.errors.add(:url, :taken)
-      false
-    end
-
     # Folders are nested outlines; flatten them and keep those with a feed URL.
     def outlines
       document.xpath("/opml/body//outline[@xmlUrl]").map do |outline|

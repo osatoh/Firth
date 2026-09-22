@@ -117,6 +117,31 @@ RSpec.describe Feed, type: :model do
     end
   end
 
+  # Two concurrent saves can both clear the uniqueness validation; the unique
+  # index catches the loser. Skipping the validation reproduces that loser.
+  describe "losing a race at the unique index" do
+    before do
+      allow_any_instance_of(ActiveRecord::Validations::UniquenessValidator).to receive(:validate_each)
+    end
+
+    it "reports a taken URL instead of raising on create" do
+      existing = create(:feed)
+      feed = build(:feed, user: existing.user, url: existing.url)
+
+      expect(feed.save).to be(false)
+      expect(feed.errors).to be_of_kind(:url, :taken)
+      expect(feed).to be_new_record
+    end
+
+    it "reports a taken URL instead of raising on update" do
+      existing = create(:feed)
+      feed = create(:feed, user: existing.user, url: "https://example.com/other.xml")
+
+      expect(feed.update(url: existing.url)).to be(false)
+      expect(feed.errors).to be_of_kind(:url, :taken)
+    end
+  end
+
   describe "ownership" do
     it "is destroyed along with its user" do
       feed = create(:feed)
