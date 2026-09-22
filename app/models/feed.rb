@@ -1,5 +1,6 @@
 class Feed < ApplicationRecord
   belongs_to :user
+  has_many :articles, dependent: :delete_all
 
   validates :title, presence: true
   validates :url, presence: true, uniqueness: { scope: :user_id }
