@@ -47,24 +47,20 @@ class FetchFeedJob < ApplicationJob
     end
 
     def store_new_entries(feed, entries)
-      now = Time.current
       rows = entries.filter_map do |entry|
         url = entry.url.presence or next
         {
-          feed_id: feed.id,
           # RSS guid / Atom id, falling back to the URL for feeds without one.
           guid: entry.entry_id.presence || url,
           url:,
           title: entry.title.presence || url,
-          published_at: entry.published,
-          created_at: now,
-          updated_at: now
+          published_at: entry.published
         }
       end
       return if rows.empty?
 
       # The unique index decides what is new, so concurrent fetches of the
       # same feed cannot store an entry twice.
-      Article.insert_all(rows, unique_by: [ :feed_id, :guid ])
+      feed.articles.insert_all(rows, unique_by: [ :feed_id, :guid ])
     end
 end
