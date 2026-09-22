@@ -61,6 +61,7 @@ ja:
     index:
       title: "フィード"
       new: "フィードを追加"
+      import: "OPML をインポート"
       remaining: "あと %{count} 件追加できます"
       empty: "まだフィードがありません。"
       edit: "編集"
@@ -72,6 +73,17 @@ ja:
       title: "フィードを編集"
     form:
       back: "フィード一覧へ戻る"
+    imports:
+      new:
+        title: "OPML をインポート"
+        hint: "他の RSS リーダーから書き出した OPML ファイル (1MB まで) を選んでください。登録済みのフィードは飛ばし、上限に達したところで止まります。"
+        submit: "インポート"
+        back: "フィード一覧へ戻る"
+      create:
+        notice: "%{added} 件追加、%{duplicate} 件は登録済み、%{invalid} 件は無効、%{over_limit} 件は上限のため追加できませんでした。"
+        missing: "OPML ファイルを選択してください。"
+        too_large: "ファイルが大きすぎます (%{size}MB まで)。"
+        invalid_file: "OPML ファイルとして読み込めませんでした。"
   settings:
     edit:
       title: "設定"
