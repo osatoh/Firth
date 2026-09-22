@@ -58,7 +58,8 @@ module SafeHttp
   end
 
   def self.request(uri)
-    http = Net::HTTP.new(uri.hostname, uri.port)
+    # No proxy: going through one would bypass the address check.
+    http = Net::HTTP.new(uri.hostname, uri.port, nil)
     http.ipaddr = resolve(uri.hostname)
     http.use_ssl = uri.scheme == "https"
     http.open_timeout = http.read_timeout = http.write_timeout = TIMEOUT
