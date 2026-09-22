@@ -50,6 +50,26 @@ RSpec.describe "Feeds", type: :request do
         expect(response.body).to include(mine.title)
         expect(response.body).not_to include(others.title)
       end
+
+      it "shows how many feeds remain" do
+        stub_const("Feed::LIMIT_PER_USER", 3)
+        create(:feed, user:)
+
+        get feeds_path
+
+        expect(response.body).to include("あと 2 件追加できます")
+        expect(response.body).to include(new_feed_path)
+      end
+
+      it "replaces the add link with the reason once the limit is reached" do
+        stub_const("Feed::LIMIT_PER_USER", 1)
+        create(:feed, user:)
+
+        get feeds_path
+
+        expect(response.body).to include("登録できるフィードは 1 件までです。")
+        expect(response.body).not_to include(%(href="#{new_feed_path}"))
+      end
     end
 
     describe "create" do
@@ -74,6 +94,18 @@ RSpec.describe "Feeds", type: :request do
 
         expect(response).to have_http_status(422)
         expect(response.body).to include("RSS の URLはすでに存在します")
+      end
+
+      it "refuses a feed beyond the limit and says why" do
+        stub_const("Feed::LIMIT_PER_USER", 1)
+        create(:feed, user:)
+
+        expect {
+          post feeds_path, params: { feed: { title: "Example Blog", url: "https://example.com/feed.xml" } }
+        }.not_to change(Feed, :count)
+
+        expect(response).to have_http_status(422)
+        expect(response.body).to include("登録できるフィードは 1 件までです。")
       end
 
       it "rejects an invalid URL and re-renders the form" do

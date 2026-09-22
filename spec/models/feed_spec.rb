@@ -90,6 +90,33 @@ RSpec.describe Feed, type: :model do
     end
   end
 
+  describe "per-user limit" do
+    before { stub_const("Feed::LIMIT_PER_USER", 2) }
+
+    let(:user) { create(:user) }
+
+    it "refuses a new feed once the user has reached the limit" do
+      create_list(:feed, 2, user:)
+      feed = build(:feed, user:)
+
+      expect(feed).to be_invalid
+      expect(feed.errors).to be_of_kind(:base, :limit_reached)
+      expect(feed.errors.full_messages).to include("登録できるフィードは 2 件までです。追加するには既存のフィードを削除してください。")
+    end
+
+    it "does not count other users' feeds" do
+      create_list(:feed, 2)
+
+      expect(build(:feed, user:)).to be_valid
+    end
+
+    it "still lets a feed at the limit be updated" do
+      feeds = create_list(:feed, 2, user:)
+
+      expect(feeds.last.update(title: "Renamed")).to be(true)
+    end
+  end
+
   describe "ownership" do
     it "is destroyed along with its user" do
       feed = create(:feed)

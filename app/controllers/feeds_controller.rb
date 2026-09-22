@@ -3,6 +3,7 @@ class FeedsController < ApplicationController
 
   def index
     @feeds = current_user.feeds.order(created_at: :desc)
+    @remaining_feed_count = current_user.remaining_feed_count
   end
 
   def new
