@@ -88,7 +88,8 @@ RSpec.describe "Feeds", type: :request do
       # Two concurrent requests can both clear the uniqueness validation and
       # reach the unique index. The loser must not see a 500.
       it "re-renders the form when the unique index rejects the insert" do
-        allow_any_instance_of(Feed).to receive(:save).and_raise(ActiveRecord::RecordNotUnique.new("duplicate key"))
+        create(:feed, user:, url: "https://example.com/feed.xml")
+        allow_any_instance_of(ActiveRecord::Validations::UniquenessValidator).to receive(:validate_each)
 
         post feeds_path, params: { feed: { title: "Example Blog", url: "https://example.com/feed.xml" } }
 
@@ -129,8 +130,9 @@ RSpec.describe "Feeds", type: :request do
       end
 
       it "re-renders the form when the unique index rejects the update" do
+        create(:feed, user:, url: "https://example.com/other.xml")
         feed = create(:feed, user:)
-        allow_any_instance_of(Feed).to receive(:update).and_raise(ActiveRecord::RecordNotUnique.new("duplicate key"))
+        allow_any_instance_of(ActiveRecord::Validations::UniquenessValidator).to receive(:validate_each)
 
         patch feed_path(feed), params: { feed: { url: "https://example.com/other.xml" } }
 

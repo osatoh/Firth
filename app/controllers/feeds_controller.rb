@@ -18,11 +18,6 @@ class FeedsController < ApplicationController
     else
       render :new, status: :unprocessable_content
     end
-  rescue ActiveRecord::RecordNotUnique
-    # Two concurrent requests can both clear the uniqueness validation; the
-    # unique index catches the loser, which belongs on the form, not in a 500.
-    reject_as_taken
-    render :new, status: :unprocessable_content
   end
 
   def edit
@@ -34,9 +29,6 @@ class FeedsController < ApplicationController
     else
       render :edit, status: :unprocessable_content
     end
-  rescue ActiveRecord::RecordNotUnique
-    reject_as_taken
-    render :edit, status: :unprocessable_content
   end
 
   def destroy
@@ -49,10 +41,6 @@ class FeedsController < ApplicationController
     # Scoped to the current user, so another user's feed comes back as 404.
     def set_feed
       @feed = current_user.feeds.find(params[:id])
-    end
-
-    def reject_as_taken
-      @feed.errors.add(:url, :taken)
     end
 
     def feed_params

@@ -15,6 +15,16 @@ class Feed < ApplicationRecord
   # A new record's URL counts as changed, so this also covers creation.
   after_commit :enqueue_fetch, if: :saved_change_to_url?
 
+  # Two concurrent saves can both clear the uniqueness validation; the unique
+  # index catches the loser. Report that as the same error the validation
+  # gives, so callers need not handle the race themselves.
+  def save(**)
+    super
+  rescue ActiveRecord::RecordNotUnique
+    errors.add(:url, :taken)
+    false
+  end
+
   private
     def enqueue_fetch
       FetchFeedJob.perform_later(self)
