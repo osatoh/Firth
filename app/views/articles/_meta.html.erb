@@ -1,0 +1,4 @@
+<%= article.feed.title %>
+<% if article.published_at %>
+  · <%= l(article.published_at, format: :article) %>
+<% end %>

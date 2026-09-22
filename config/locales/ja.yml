@@ -57,6 +57,10 @@ ja:
     index:
       title: "記事"
       empty: "まだ記事がありません。"
+      original: "元記事"
+    show:
+      original: "元記事を開く"
+      back: "記事一覧へ戻る"
   pages:
     landing:
       tagline: "AI 要約付きの RSS リーダーです。"
