@@ -10,6 +10,10 @@ class FetchFeedJob < ApplicationJob
     parsed = Feedjira.parse(SafeHttp.get(feed.url))
     store_new_entries(feed, parsed.entries)
     feed.update!(last_fetched_at: Time.current)
+  rescue ActiveRecord::InvalidForeignKey
+    # The user deleted the account mid-fetch, so the new articles have no
+    # feed to belong to. Anything else is a bug worth surfacing.
+    raise if Feed.exists?(feed.id)
   rescue *SafeHttp::FAILURES, Feedjira::NoParserAvailable => e
     # Not re-raised: the next scheduled fetch is the retry, so a broken feed
     # cannot pile up retries in the queue.
