@@ -22,5 +22,9 @@ Rails.application.routes.draw do
     post :visit, on: :member
   end
 
+  resource :settings, only: %i[edit update] do
+    resource :api_key, only: :destroy, module: :settings
+  end
+
   root "pages#landing"
 end

@@ -28,6 +28,7 @@
       <nav class="container mx-auto px-5 py-4 flex items-center gap-4">
         <%= link_to t("nav.articles"), articles_path, class: "text-gray-700 underline" %>
         <%= link_to t("nav.feeds"), feeds_path, class: "text-gray-700 underline" %>
+        <%= link_to t("nav.settings"), edit_settings_path, class: "text-gray-700 underline" %>
         <%= button_to t("nav.sign_out"), sign_out_path, method: :delete, class: "text-gray-700 underline" %>
       </nav>
     <% end %>
