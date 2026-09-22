@@ -15,6 +15,12 @@ module SafeHttp
   class Error < StandardError; end
   class BlockedAddressError < Error; end
 
+  # Everything a fetch of an untrusted URL is expected to fail with.
+  FAILURES = [
+    Error, SystemCallError, SocketError, Timeout::Error, OpenSSL::SSL::SSLError,
+    Net::HTTPBadResponse, URI::InvalidURIError
+  ].freeze
+
   # Special-purpose ranges (RFC 6890 and the IANA registries) that are not
   # reachable, or not meant to be reachable, on the public internet.
   BLOCKED_RANGES = %w[
@@ -26,18 +32,24 @@ module SafeHttp
   ].map { IPAddr.new(it) }.freeze
 
   # Returns the response body of a successful GET, following redirects.
-  # Raises SafeHttp::Error (or a network error) when the URL cannot be fetched.
-  def self.get(url, redirects_left: MAX_REDIRECTS)
+  # Raises one of FAILURES when the URL cannot be fetched.
+  def self.get(url)
+    fetch(url).body
+  end
+
+  # Like .get, but returns the whole successful Net::HTTPResponse so callers
+  # can read headers such as Content-Type.
+  def self.fetch(url, redirects_left: MAX_REDIRECTS)
     uri = WebUrl.parse(url) or raise Error, "not an http(s) URL: #{url}"
     response = request(uri)
 
     case response
     when Net::HTTPSuccess
-      response.body
+      response
     when Net::HTTPRedirection
       raise Error, "too many redirects" if redirects_left.zero?
 
-      get(URI.join(uri, response["location"]).to_s, redirects_left: redirects_left - 1)
+      fetch(URI.join(uri, response["location"]).to_s, redirects_left: redirects_left - 1)
     else
       raise Error, "HTTP #{response.code}"
     end

@@ -1,6 +1,17 @@
 require "rails_helper"
 
 RSpec.describe SafeHttp do
+  describe ".fetch" do
+    it "returns the successful response, headers included" do
+      stub_request(:get, "https://example.com/post")
+        .to_return(status: 200, body: "ok", headers: { "Content-Type" => "text/html; charset=utf-8" })
+
+      response = described_class.fetch("https://example.com/post")
+
+      expect(response).to have_attributes(body: "ok", content_type: "text/html")
+    end
+  end
+
   describe ".get" do
     it "returns the body of a successful response" do
       stub_request(:get, "https://example.com/feed.xml").to_return(status: 200, body: "ok")
