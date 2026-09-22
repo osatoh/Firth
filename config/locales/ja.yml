@@ -1,0 +1,66 @@
+ja:
+  activerecord:
+    models:
+      article: "記事"
+      feed: "フィード"
+      user: "ユーザー"
+    attributes:
+      article:
+        feed: "フィード"
+        guid: "GUID"
+        published_at: "公開日時"
+        title: "タイトル"
+        url: "URL"
+      feed:
+        title: "タイトル"
+        url: "RSS の URL"
+        user: "ユーザー"
+      user:
+        email: "メールアドレス"
+        google_uid: "Google UID"
+        name: "名前"
+  nav:
+    articles: "記事"
+    feeds: "フィード"
+    sign_out: "サインアウト"
+  application:
+    require_sign_in:
+      alert: "サインインしてください。"
+  sessions:
+    create:
+      notice: "サインインしました。"
+    destroy:
+      notice: "サインアウトしました。"
+    failure:
+      alert: "サインインできませんでした。"
+  feeds:
+    create:
+      notice: "フィードを追加しました。"
+    update:
+      notice: "フィードを更新しました。"
+    destroy:
+      notice: "フィードを削除しました。"
+    index:
+      title: "フィード"
+      new: "フィードを追加"
+      empty: "まだフィードがありません。"
+      edit: "編集"
+      delete: "削除"
+      confirm_delete: "%{title} を削除しますか？"
+    new:
+      title: "フィードを追加"
+    edit:
+      title: "フィードを編集"
+    form:
+      back: "フィード一覧へ戻る"
+  articles:
+    index:
+      title: "記事"
+      empty: "まだ記事がありません。"
+  pages:
+    landing:
+      tagline: "AI 要約付きの RSS リーダーです。"
+      sign_in: "Google でサインイン"
+  time:
+    formats:
+      article: "%Y-%m-%d %H:%M"

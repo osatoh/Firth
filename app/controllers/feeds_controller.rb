@@ -13,7 +13,7 @@ class FeedsController < ApplicationController
     @feed = current_user.feeds.new(feed_params)
 
     if @feed.save
-      redirect_to feeds_path, notice: "フィードを追加しました。"
+      redirect_to feeds_path, notice: t(".notice")
     else
       render :new, status: :unprocessable_content
     end
@@ -29,7 +29,7 @@ class FeedsController < ApplicationController
 
   def update
     if @feed.update(feed_params)
-      redirect_to feeds_path, notice: "フィードを更新しました。"
+      redirect_to feeds_path, notice: t(".notice")
     else
       render :edit, status: :unprocessable_content
     end
@@ -41,7 +41,7 @@ class FeedsController < ApplicationController
   def destroy
     @feed.destroy!
 
-    redirect_to feeds_path, notice: "フィードを削除しました。"
+    redirect_to feeds_path, notice: t(".notice")
   end
 
   private

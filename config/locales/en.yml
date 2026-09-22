@@ -27,15 +27,5 @@
 #       "yes": yup
 #       enabled: "ON"
 
-en:
-  nav:
-    articles: "記事"
-    feeds: "フィード"
-    sign_out: "サインアウト"
-  articles:
-    index:
-      title: "記事"
-      empty: "まだ記事がありません。"
-  time:
-    formats:
-      article: "%Y-%m-%d %H:%M"
+en: {}
+
