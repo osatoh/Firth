@@ -34,7 +34,7 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # json 3.0 は ActiveSupport 8.1 のメッセージ復号 (JSON.parse の引数) と非互換なため 2 系に固定する
-gem "json", "~> 2.9"
+gem "json", "~> 3.0"
 
 # Google sign-in [https://github.com/zquestz/omniauth-google-oauth2]
 gem "omniauth-google-oauth2"
