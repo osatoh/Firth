@@ -1,0 +1,17 @@
+<% content_for :title, t(".title") %>
+
+<div class="w-full max-w-lg">
+  <h1 class="text-2xl font-bold mb-2"><%= t(".title") %></h1>
+  <p class="mb-6 text-gray-700"><%= t(".lead") %></p>
+
+  <%= form_with model: @user, url: onboarding_path, class: "contents" do |form| %>
+    <%= render "errors", record: @user %>
+
+    <%= render "settings/fields", form:, hint: t(".api_key_hint") %>
+
+    <div class="flex items-center gap-4">
+      <%= form.submit t(".save"), class: "rounded-md px-4 py-2 bg-gray-900 text-white font-medium cursor-pointer" %>
+      <%= link_to t(".skip"), articles_path, class: "text-gray-700 underline" %>
+    </div>
+  <% end %>
+</div>

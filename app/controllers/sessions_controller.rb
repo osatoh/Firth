@@ -8,13 +8,15 @@ class SessionsController < ApplicationController
 
   def create
     user = User.find_or_initialize_by(google_uid: auth[:uid])
+    # Only the sign-in that creates the user is prompted; skipping needs nothing remembered.
+    first_sign_in = user.new_record?
     # Pick up the latest email and name from Google on every sign-in.
     user.update!(email: auth[:info][:email], name: auth[:info][:name])
 
     reset_session
     session[:user_id] = user.id
 
-    redirect_to root_path, notice: t(".notice")
+    redirect_to first_sign_in ? onboarding_path : root_path, notice: t(".notice")
   end
 
   def destroy

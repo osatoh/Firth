@@ -12,6 +12,20 @@ RSpec.describe "Sessions", type: :request do
       expect(session[:user_id]).to eq(user.id)
     end
 
+    it "sends a brand-new user to the onboarding step" do
+      sign_in_with_google
+
+      expect(response).to redirect_to(onboarding_path)
+    end
+
+    it "sends a returning user to the root path, not the onboarding step" do
+      create(:user, google_uid: "signed-in-google-uid")
+
+      sign_in_with_google
+
+      expect(response).to redirect_to(root_path)
+    end
+
     it "reuses the existing user on a later sign-in and refreshes the email and name" do
       user = create(:user, google_uid: "signed-in-google-uid", email: "old@example.com", name: "Old Name")
 

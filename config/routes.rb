@@ -26,6 +26,9 @@ Rails.application.routes.draw do
     resource :summary, only: :create, module: :articles
   end
 
+  # The prompt a brand-new user lands on after the first sign-in.
+  resource :onboarding, only: %i[show update]
+
   resource :settings, only: %i[edit update] do
     resource :api_key, only: :destroy, module: :settings
     resource :account, only: :destroy, module: :settings

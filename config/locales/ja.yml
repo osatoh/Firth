@@ -84,12 +84,27 @@ ja:
         missing: "OPML ファイルを選択してください。"
         too_large: "ファイルが大きすぎます (%{size}MB まで)。"
         invalid_file: "OPML ファイルとして読み込めませんでした。"
+  onboardings:
+    show:
+      title: "ようこそ"
+      lead: "要約に使う Claude API キーと、要約の言語を設定しましょう。あとから設定画面でも変更できます。"
+      api_key_hint: "お持ちでなければ空欄のままで構いません。"
+      save: "保存してはじめる"
+      skip: "スキップ"
+    update:
+      notice: "設定を保存しました。"
   settings:
+    fields:
+      api_key_placeholder: "sk-ant-..."
+      languages:
+        ja: "日本語"
+        en: "英語"
+        zh: "中国語"
+        ko: "韓国語"
     edit:
       title: "設定"
       api_key_stored: "保存済みのキー: %{key}"
       api_key_missing: "API キーは未設定です。"
-      api_key_placeholder: "sk-ant-..."
       api_key_hint: "入れ替えるときだけ入力してください。空欄のままなら今のキーを使い続けます。"
       save: "保存"
       delete_api_key: "API キーを削除"
@@ -97,11 +112,6 @@ ja:
       delete_account: "アカウントを削除"
       delete_account_hint: "フィード・記事・要約・API キーがすべて削除され、元に戻せません。"
       confirm_delete_account: "アカウントと、すべてのフィード・記事・要約を完全に削除します。元に戻せません。よろしいですか？"
-      languages:
-        ja: "日本語"
-        en: "英語"
-        zh: "中国語"
-        ko: "韓国語"
     update:
       notice: "設定を保存しました。"
     api_keys:
@@ -114,6 +124,9 @@ ja:
     index:
       title: "記事"
       empty: "まだ記事がありません。"
+      empty_hint_html: "%{add_feed}か、%{import}すると、ここに記事が届きます。"
+      add_feed: "フィードを追加する"
+      import: "OPML をインポート"
       original: "元記事"
     show:
       original: "元記事を開く"
