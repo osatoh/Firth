@@ -68,4 +68,10 @@ RSpec.describe Summary, type: :model do
 
     expect { summary.article.destroy }.to change(Summary, :count).by(-1)
   end
+
+  it "has a Japanese message for every failure reason" do
+    Summary::FAILURE_REASONS.each do |reason|
+      expect(I18n.exists?("summaries.failure_reasons.#{reason}", :ja)).to be(true), reason
+    end
+  end
 end

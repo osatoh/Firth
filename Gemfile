@@ -46,6 +46,9 @@ gem "omniauth-rails_csrf_protection"
 # Parses RSS and Atom feeds [https://github.com/feedjira/feedjira]
 gem "feedjira", "~> 4.0"
 
+# Official Claude API client, used with each user's own key [https://github.com/anthropics/anthropic-sdk-ruby]
+gem "anthropic"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
