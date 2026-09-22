@@ -12,12 +12,7 @@ class Article < ApplicationRecord
   end
 
   # Feeds are untrusted, so only http(s) URLs with a host are safe to send a browser to.
-  def web_url?
-    uri = URI.parse(url)
-    uri.is_a?(URI::HTTP) && uri.host.present?
-  rescue URI::InvalidURIError
-    false
-  end
+  def web_url? = WebUrl.valid?(url)
 
   validates :guid, presence: true, uniqueness: { scope: :feed_id }
   validates :url, presence: true

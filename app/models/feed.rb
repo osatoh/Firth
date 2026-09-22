@@ -23,24 +23,16 @@ class Feed < ApplicationRecord
     def normalize_url
       return if url.blank?
 
-      uri = URI.parse(url)
-      return unless uri.is_a?(URI::HTTP) && uri.host.present?
+      uri = WebUrl.parse(url) or return
 
       uri.host = uri.host.downcase
       uri.path = "/" if uri.path.empty?
       self.url = uri.to_s
-    rescue URI::InvalidURIError
-      # Leave it as typed; url_must_be_http reports the problem.
     end
 
     # Only checks that the URL is shaped like something we can fetch.
     # Whether it actually resolves is the fetch job's concern (task 2.2).
     def url_must_be_http
-      return if url.blank?
-
-      uri = URI.parse(url)
-      errors.add(:url, :invalid) unless uri.is_a?(URI::HTTP) && uri.host.present?
-    rescue URI::InvalidURIError
-      errors.add(:url, :invalid)
+      errors.add(:url, :invalid) unless url.blank? || WebUrl.valid?(url)
     end
 end

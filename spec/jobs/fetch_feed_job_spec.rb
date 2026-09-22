@@ -58,13 +58,27 @@ RSpec.describe FetchFeedJob, type: :job do
     expect { described_class.perform_now(feed) }.to change(feed.articles, :count).by(1)
   end
 
+  it "skips entries whose URL is not http(s)" do
+    stub_feed(body: rss.sub("<link>https://example.com/posts/2</link>", "<link>javascript:alert(1)</link>"))
+
+    described_class.perform_now(feed)
+
+    expect(feed.articles.pluck(:url)).to eq [ "https://example.com/posts/1" ]
+  end
+
   # A broken feed is retried by the next scheduled fetch, not by re-raising.
   context "when the feed cannot be fetched" do
     [
       [ "the server returns an error", -> { stub_feed(status: 500) } ],
       [ "the body is not a feed", -> { stub_feed(body: "<html>not a feed</html>") } ],
       [ "the connection fails", -> { stub_request(:get, feed.url).to_raise(SocketError) } ],
-      [ "the request times out", -> { stub_request(:get, feed.url).to_timeout } ]
+      [ "the request times out", -> { stub_request(:get, feed.url).to_timeout } ],
+      [ "the host resolves to a private address", -> { allow(Resolv).to receive(:getaddresses).and_return([ "127.0.0.1" ]) } ],
+      [ "it redirects to a private address", lambda {
+        stub_request(:get, feed.url).to_return(status: 302, headers: { "Location" => "http://169.254.169.254/" })
+        allow(Resolv).to receive(:getaddresses).and_call_original
+        allow(Resolv).to receive(:getaddresses).with("example.com").and_return([ "93.184.215.14" ])
+      } ]
     ].each do |situation, stub|
       it "stores nothing and does not raise when #{situation}" do
         instance_exec(&stub)
