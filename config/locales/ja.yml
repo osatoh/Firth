@@ -97,6 +97,16 @@ ja:
     show:
       original: "元記事を開く"
       back: "記事一覧へ戻る"
+  summaries:
+    failure_reasons:
+      blocked_address: "この記事の URL には接続できないため、要約できませんでした。"
+      fetch_failed: "記事を取得できませんでした。時間をおいて再度お試しください。"
+      not_html: "この記事は HTML ページではないため、要約できませんでした。"
+      no_content: "記事の本文を読み取れませんでした。"
+      missing_api_key: "Claude API キーが設定されていません。設定画面から登録してください。"
+      invalid_api_key: "Claude API キーが無効です。設定画面でキーを確認してください。"
+      rate_limited: "Claude API が混み合っています。時間をおいて再度お試しください。"
+      api_error: "Claude API でエラーが発生しました。時間をおいて再度お試しください。"
   pages:
     landing:
       tagline: "AI 要約付きの RSS リーダーです。"
