@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_135136) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_150000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -36,6 +36,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_135136) do
     t.index ["user_id", "url"], name: "index_feeds_on_user_id_and_url", unique: true
   end
 
+  create_table "summaries", force: :cascade do |t|
+    t.bigint "article_id", null: false
+    t.text "body"
+    t.datetime "created_at", null: false
+    t.string "failure_reason"
+    t.string "language", null: false
+    t.string "state", default: "pending", null: false
+    t.datetime "updated_at", null: false
+    t.index ["article_id", "language"], name: "index_summaries_on_article_id_and_language", unique: true
+  end
+
   create_table "users", force: :cascade do |t|
     t.text "anthropic_api_key"
     t.datetime "created_at", null: false
@@ -49,4 +60,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_135136) do
 
   add_foreign_key "articles", "feeds"
   add_foreign_key "feeds", "users"
+  add_foreign_key "summaries", "articles"
 end

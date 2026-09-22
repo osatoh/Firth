@@ -10,7 +10,9 @@ class ArticleExtractor
     def success? = true
   end
 
-  # reason is one of :blocked_address, :fetch_failed, :not_html, :no_content.
+  FAILURE_REASONS = %i[blocked_address fetch_failed not_html no_content].freeze
+
+  # reason is one of FAILURE_REASONS.
   Failure = Data.define(:reason) do
     def success? = false
   end
