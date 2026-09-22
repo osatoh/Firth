@@ -16,20 +16,24 @@ class Summary < ApplicationRecord
   validates :failure_reason, inclusion: { in: FAILURE_REASONS }, if: :failed?
   validates :failure_reason, absence: true, unless: :failed?
 
+  # Every state change (requested, retried, finished) reaches every open tab.
+  # (One callback: Rails keeps only the last after_commit for a given method.)
+  after_save_commit :broadcast_update, if: -> { previously_new_record? || saved_change_to_state? }
+
   def fixable_in_settings? = failure_reason.in?(KEY_FAILURE_REASONS)
 
-  # Puts a failed summary back to pending. Only one of several concurrent
-  # callers wins, so the caller that gets true is the one to enqueue the job.
+  # Puts a failed summary back to pending. The row lock lets only one of
+  # several concurrent callers win, so the caller that gets true is the one
+  # to enqueue the job.
   def retry_if_failed
     return false unless failed?
 
-    reset = self.class.where(id:, state: :failed).update_all(state: :pending, failure_reason: nil, updated_at: Time.current) == 1
-    reload
-    reset
+    with_lock { failed? && update!(state: :pending, failure_reason: nil) }
   end
 
-  # Replaces the summary on the article pages that are showing it.
-  def broadcast_update
-    broadcast_replace_to article, :summary, language, target: "summary", partial: "articles/summary", locals: { article:, summary: self }
-  end
+  private
+    # Replaces the summary on the article pages that are showing it.
+    def broadcast_update
+      broadcast_replace_to article, :summary, language, target: "summary", partial: "articles/summary", locals: { article:, summary: self }
+    end
 end
