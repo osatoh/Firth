@@ -1,7 +1,15 @@
-<div>
-  <h1>Firth</h1>
-  <p><%= t(".tagline") %></p>
+<div class="w-full max-w-lg">
+  <h1 class="text-3xl font-bold mb-2">Firth</h1>
+  <p class="mb-6 text-gray-700"><%= t(".tagline") %></p>
+
+  <h2 class="text-lg font-semibold mb-2"><%= t(".features_heading") %></h2>
+  <ul class="mb-6 list-disc pl-5 space-y-1 text-gray-700">
+    <% t(".features").each do |feature| %>
+      <li><%= feature %></li>
+    <% end %>
+  </ul>
 
   <%# Signed-in visitors are redirected to their articles, so only the sign-in button is needed. %>
-  <%= button_to t(".sign_in"), "/auth/google_oauth2", data: { turbo: false } %>
+  <%= button_to t(".sign_in"), "/auth/google_oauth2", data: { turbo: false },
+                class: "rounded-md px-4 py-2 bg-gray-900 text-white font-medium cursor-pointer" %>
 </div>
