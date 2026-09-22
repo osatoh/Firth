@@ -74,4 +74,33 @@ RSpec.describe Summary, type: :model do
       expect(I18n.exists?("summaries.failure_reasons.#{reason}", :ja)).to be(true), reason
     end
   end
+
+  describe "live update of the article page" do
+    let(:article) { create(:article) }
+    let(:stream) { "#{article.to_gid_param}:summary:en" }
+
+    it "replaces the summary with the pending one when a summary is requested" do
+      expect { article.request_summary("en") }.to have_broadcasted_to(stream).exactly(:once)
+        .with(a_string_including('action="replace"', 'target="summary"', I18n.t("articles.summary.pending")))
+    end
+
+    it "replaces the summary with the pending one when a failed summary is retried" do
+      create(:summary, :failed, article:, language: "en", failure_reason: "api_error")
+
+      expect { article.request_summary("en") }.to have_broadcasted_to(stream).exactly(:once)
+        .with(a_string_including('action="replace"', I18n.t("articles.summary.pending")))
+    end
+
+    it "does not broadcast when a summary is requested again while in progress" do
+      create(:summary, article:, language: "en")
+
+      expect { article.request_summary("en") }.not_to have_broadcasted_to(stream)
+    end
+
+    it "does not broadcast a change that leaves the state alone" do
+      summary = create(:summary, :done, article:, language: "en", body: "Old")
+
+      expect { summary.update!(body: "New") }.not_to have_broadcasted_to(stream)
+    end
+  end
 end

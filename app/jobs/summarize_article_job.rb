@@ -13,27 +13,20 @@ class SummarizeArticleJob < ApplicationJob
     return unless summary.pending?
 
     api_key = summary.article.feed.user.anthropic_api_key
-    return finish(summary, state: :failed, failure_reason: "missing_api_key") unless api_key
+    return summary.update!(state: :failed, failure_reason: "missing_api_key") unless api_key
 
     extracted = ArticleExtractor.extract(summary.article.url)
-    return finish(summary, state: :failed, failure_reason: extracted.reason.to_s) unless extracted.success?
+    return summary.update!(state: :failed, failure_reason: extracted.reason.to_s) unless extracted.success?
 
     result = ArticleSummarizer.summarize(api_key:, text: extracted.text, language: summary.language)
     if result.success?
-      finish(summary, state: :done, body: result.body)
+      summary.update!(state: :done, body: result.body)
     else
-      finish(summary, state: :failed, failure_reason: result.reason)
+      summary.update!(state: :failed, failure_reason: result.reason)
     end
   rescue StandardError
     # Unexpected: still never leave the summary pending, but surface the bug.
-    finish(summary, state: :failed, failure_reason: "api_error")
+    summary.update!(state: :failed, failure_reason: "api_error")
     raise
   end
-
-  private
-    # The single place a summary leaves pending, so the page updates live from here.
-    def finish(summary, **attributes)
-      summary.update!(**attributes)
-      summary.broadcast_update
-    end
 end

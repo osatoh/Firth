@@ -136,14 +136,14 @@ RSpec.describe SummarizeArticleJob, type: :job do
     it "replaces the summary with the finished one" do
       stub_claude
 
-      expect { described_class.perform_now(summary) }.to have_broadcasted_to(stream)
+      expect { described_class.perform_now(summary) }.to have_broadcasted_to(stream).exactly(:once)
         .with(a_string_including('action="replace"', 'target="summary"', "Rivers bend over time."))
     end
 
     it "replaces the summary with a failure too" do
       user.update!(anthropic_api_key: nil)
 
-      expect { described_class.perform_now(summary) }.to have_broadcasted_to(stream)
+      expect { described_class.perform_now(summary) }.to have_broadcasted_to(stream).exactly(:once)
         .with(a_string_including(I18n.t("summaries.failure_reasons.missing_api_key")))
     end
   end
