@@ -15,6 +15,9 @@ RSpec.describe "Settings", type: :request do
 
       delete settings_api_key_path
       expect(response).to redirect_to(root_path)
+
+      expect { delete settings_account_path }.not_to change(User, :count)
+      expect(response).to redirect_to(root_path)
     end
   end
 
@@ -83,6 +86,19 @@ RSpec.describe "Settings", type: :request do
 
         expect(response).to redirect_to(edit_settings_path)
         expect(user.reload.anthropic_api_key).to be_nil
+      end
+    end
+
+    describe "destroy account" do
+      it "deletes the user, signs out and says so" do
+        expect { delete settings_account_path }.to change(User, :count).by(-1)
+        expect(response).to redirect_to(root_path)
+
+        follow_redirect!
+        expect(response.body).to include("アカウントを削除しました。")
+
+        get edit_settings_path
+        expect(response).to redirect_to(root_path)
       end
     end
   end

@@ -62,4 +62,21 @@ RSpec.describe User do
       expect(build(:user).masked_anthropic_api_key).to be_nil
     end
   end
+
+  describe "#destroy" do
+    it "removes the user's feeds, articles and summaries, but no one else's" do
+      user = create(:user, anthropic_api_key: "sk-ant-api03-secret1234")
+      article = create(:article, feed: create(:feed, user:))
+      create(:summary, article:, language: "ja")
+      create(:summary, article:, language: "en")
+      other_summary = create(:summary)
+
+      user.destroy!
+
+      expect(User.exists?(user.id)).to be(false)
+      expect(Feed.where(user_id: user.id)).to be_empty
+      expect(Article.all).to eq([ other_summary.article ])
+      expect(Summary.all).to eq([ other_summary ])
+    end
+  end
 end

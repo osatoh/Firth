@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
   resource :settings, only: %i[edit update] do
     resource :api_key, only: :destroy, module: :settings
+    resource :account, only: :destroy, module: :settings
   end
 
   root "pages#landing"
