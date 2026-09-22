@@ -64,6 +64,12 @@ RSpec.describe "Articles", type: :request do
       expect(response.body).to include("まだ記事がありません。")
     end
 
+    it "points to adding feeds or importing OPML when there are no articles yet" do
+      get articles_path
+
+      expect(response.body).to include(%(href="#{new_feed_path}"), %(href="#{new_feeds_import_path}"))
+    end
+
     it "links each article to its own page" do
       article = create(:article, feed: create(:feed, user:))
 

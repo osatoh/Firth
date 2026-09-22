@@ -1,0 +1,17 @@
+<%# The API key and summary language fields, shared by the settings page and the onboarding prompt. %>
+<div class="mb-4">
+  <%= form.label :anthropic_api_key, class: "block font-medium mb-1" %>
+  <% if local_assigns[:status] %>
+    <p class="mb-2 text-gray-700"><%= status %></p>
+  <% end %>
+  <%# The stored key is never rendered back: the field always starts empty. %>
+  <%= form.password_field :anthropic_api_key, value: nil, autocomplete: "off", placeholder: t(".api_key_placeholder"),
+        class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+  <p class="mt-1 text-sm text-gray-500"><%= hint %></p>
+</div>
+
+<div class="mb-6">
+  <%= form.label :summary_language, class: "block font-medium mb-1" %>
+  <%= form.select :summary_language, User::SUMMARY_LANGUAGES.map { |code| [ t(".languages.#{code}"), code ] }, {},
+        class: "block w-full rounded-md border border-gray-300 px-3 py-2" %>
+</div>

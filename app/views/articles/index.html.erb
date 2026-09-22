@@ -5,6 +5,10 @@
 
   <% if @articles.empty? %>
     <p class="text-gray-500"><%= t(".empty") %></p>
+    <p class="mt-2 text-gray-700">
+      <%= t(".empty_hint_html", add_feed: link_to(t(".add_feed"), new_feed_path, class: "text-blue-600 hover:underline"),
+            import: link_to(t(".import"), new_feeds_import_path, class: "text-blue-600 hover:underline")) %>
+    </p>
   <% else %>
     <ul class="divide-y divide-gray-200">
       <% @articles.each do |article| %>
