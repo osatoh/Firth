@@ -7,8 +7,8 @@
   </p>
 
   <div class="flex gap-4">
-    <%= link_to t(".original"), @article.url, target: "_blank", rel: "noopener noreferrer",
-          class: "text-blue-600 hover:underline" %>
+    <%= render "original_link", article: @article, label: t(".original"),
+          class: "text-blue-600 hover:underline cursor-pointer" %>
     <%= link_to t(".back"), articles_path, class: "text-gray-600 hover:underline" %>
   </div>
 </article>

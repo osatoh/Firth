@@ -36,12 +36,23 @@ RSpec.describe "Articles", type: :request do
       expect(response.body.index("Newer Post")).to be < response.body.index("Older Post")
     end
 
-    it "links each article to its original page" do
-      create(:article, feed: create(:feed, user:), url: "https://example.com/posts/original")
+    it "opens each original page through a form that marks the article read" do
+      article = create(:article, feed: create(:feed, user:))
 
       get articles_path
 
-      expect(response.body).to include('href="https://example.com/posts/original"')
+      expect(response.body).to include(%(action="#{visit_article_path(article)}"), 'target="_blank"')
+    end
+
+    it "shows unread articles in bold and read ones muted" do
+      feed = create(:feed, user:)
+      create(:article, feed:, title: "Unread Post")
+      create(:article, feed:, title: "Read Post", read_at: Time.current)
+
+      get articles_path
+
+      expect(response.body).to match(/font-bold[^>]*>Unread Post/)
+      expect(response.body).to match(/text-gray-500[^>]*>Read Post/)
     end
 
     it "does not show another user's articles" do
@@ -80,13 +91,77 @@ RSpec.describe "Articles", type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(response.body).to include("Hello World", "My Blog", "2026-09-01 12:34",
-                                         'href="https://example.com/posts/hello"')
+                                         %(action="#{visit_article_path(article)}"))
+      end
+
+      it "marks the article read" do
+        article = create(:article, feed: create(:feed, user:))
+
+        expect { get article_path(article) }.to change { article.reload.read_at }.from(nil)
+      end
+
+      it "does not mark the article read on a Turbo prefetch" do
+        article = create(:article, feed: create(:feed, user:))
+
+        get article_path(article), headers: { "X-Sec-Purpose" => "prefetch" }
+
+        expect(article.reload.read_at).to be_nil
+      end
+
+      it "keeps the first read time on later visits" do
+        read_at = 1.day.ago.change(usec: 0)
+        article = create(:article, feed: create(:feed, user:), read_at:)
+
+        get article_path(article)
+
+        expect(article.reload.read_at).to eq(read_at)
       end
 
       it "returns 404 for another user's article" do
         get article_path(create(:article))
 
         expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
+  describe "POST /articles/:id/visit" do
+    it "turns a signed-out visitor away to the landing page" do
+      article = create(:article)
+
+      post visit_article_path(article)
+
+      expect(response).to redirect_to(root_path)
+      expect(article.reload.read_at).to be_nil
+    end
+
+    context "when signed in" do
+      before { sign_in_with_google }
+
+      it "marks the article read and redirects to its original page" do
+        article = create(:article, feed: create(:feed, user:), url: "https://example.com/posts/original")
+
+        post visit_article_path(article)
+
+        expect(response).to redirect_to("https://example.com/posts/original")
+        expect(article.reload.read_at).to be_present
+      end
+
+      it "returns 404 for another user's article" do
+        article = create(:article)
+
+        post visit_article_path(article)
+
+        expect(response).to have_http_status(:not_found)
+        expect(article.reload.read_at).to be_nil
+      end
+
+      it "refuses to redirect to a non-http URL" do
+        article = create(:article, feed: create(:feed, user:), url: "javascript:alert(1)")
+
+        post visit_article_path(article)
+
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

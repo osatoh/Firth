@@ -36,4 +36,21 @@ RSpec.describe Article, type: :model do
 
     expect { article.feed.destroy }.to change(Article, :count).by(-1)
   end
+
+  describe "#mark_read!" do
+    it "records when an unread article was read" do
+      article = create(:article)
+
+      expect { article.mark_read! }.to change(article, :read?).from(false).to(true)
+    end
+
+    it "keeps the first read time" do
+      read_at = 1.day.ago.change(usec: 0)
+      article = create(:article, read_at:)
+
+      article.mark_read!
+
+      expect(article.reload.read_at).to eq(read_at)
+    end
+  end
 end

@@ -9,9 +9,10 @@
     <ul class="divide-y divide-gray-200">
       <% @articles.each do |article| %>
         <li class="py-4 min-w-0">
-          <%= link_to article.title, article, class: "font-medium hover:underline" %>
-          <%= link_to t(".original"), article.url, target: "_blank", rel: "noopener noreferrer",
-                class: "text-sm text-blue-600 hover:underline" %>
+          <%= link_to article.title, article,
+                class: ["hover:underline", article.read? ? "font-normal text-gray-500" : "font-bold"] %>
+          <%= render "original_link", article:, label: t(".original"),
+                class: "text-sm text-blue-600 hover:underline cursor-pointer" %>
           <p class="text-sm text-gray-500">
             <%= render "meta", article: %>
           </p>
