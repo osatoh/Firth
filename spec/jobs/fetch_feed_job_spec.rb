@@ -97,4 +97,22 @@ RSpec.describe FetchFeedJob, type: :job do
     expect { ActiveJob::Base.execute(serialized) }.not_to raise_error
     expect(WebMock).not_to have_requested(:any, //)
   end
+
+  context "when its user deletes the account while it runs" do
+    # The failing insert aborts the surrounding transaction, which a
+    # transactional test would then be stuck in.
+    self.use_transactional_tests = false
+
+    after { User.where(id: feed.user_id).delete_all }
+
+    it "does nothing" do
+      stub_request(:get, feed.url).to_return do
+        feed.user.destroy!
+        { body: rss }
+      end
+
+      expect { described_class.perform_now(feed) }.not_to raise_error
+      expect(Article.where(feed_id: feed.id)).to be_empty
+    end
+  end
 end

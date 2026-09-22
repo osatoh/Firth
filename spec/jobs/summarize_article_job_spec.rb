@@ -155,4 +155,30 @@ RSpec.describe SummarizeArticleJob, type: :job do
     expect { ActiveJob::Base.execute(serialized) }.not_to raise_error
     expect(WebMock).not_to have_requested(:any, //)
   end
+
+  context "when its user deletes the account while it runs" do
+    let!(:summary) { create(:summary, article:, language: "en") }
+    let(:stream) { "#{article.to_gid_param}:summary:en" }
+
+    it "does not call Claude once the summary is gone" do
+      stub_request(:get, article.url).to_return do
+        user.destroy!
+        { body: file_fixture("article.html").read, headers: { "Content-Type" => "text/html; charset=utf-8" } }
+      end
+
+      expect { described_class.perform_now(summary) }.not_to have_broadcasted_to(stream)
+      expect(a_request(:post, messages_url)).not_to have_been_made
+    end
+
+    it "drops Claude's answer without raising" do
+      stub_request(:post, messages_url).to_return do
+        user.destroy!
+        { status: 500, body: { type: "error", error: { type: "api_error", message: "x" } }.to_json,
+          headers: { "Content-Type" => "application/json" } }
+      end
+
+      expect { described_class.perform_now(summary) }.not_to have_broadcasted_to(stream)
+      expect(Summary.exists?(summary.id)).to be false
+    end
+  end
 end
