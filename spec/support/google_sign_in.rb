@@ -17,7 +17,7 @@ module GoogleSignIn
   def google_auth_hash
     OmniAuth::AuthHash.new(
       provider: "google_oauth2",
-      uid: "google-uid-1",
+      uid: "signed-in-google-uid",
       info: { email: "user@example.com", name: "Test User" }
     )
   end

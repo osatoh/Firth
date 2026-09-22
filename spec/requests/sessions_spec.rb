@@ -8,12 +8,12 @@ RSpec.describe "Sessions", type: :request do
       expect { sign_in_with_google }.to change(User, :count).by(1)
 
       user = User.last
-      expect(user).to have_attributes(google_uid: "google-uid-1", email: "user@example.com", name: "Test User")
+      expect(user).to have_attributes(google_uid: "signed-in-google-uid", email: "user@example.com", name: "Test User")
       expect(session[:user_id]).to eq(user.id)
     end
 
     it "reuses the existing user on a later sign-in and refreshes the email and name" do
-      user = create(:user, google_uid: "google-uid-1", email: "old@example.com", name: "Old Name")
+      user = create(:user, google_uid: "signed-in-google-uid", email: "old@example.com", name: "Old Name")
 
       expect { sign_in_with_google }.not_to change(User, :count)
 
