@@ -147,4 +147,12 @@ RSpec.describe SummarizeArticleJob, type: :job do
         .with(a_string_including(I18n.t("summaries.failure_reasons.missing_api_key")))
     end
   end
+
+  it "is discarded when its user deleted the account before it ran" do
+    serialized = described_class.new(summary).serialize
+    user.destroy!
+
+    expect { ActiveJob::Base.execute(serialized) }.not_to raise_error
+    expect(WebMock).not_to have_requested(:any, //)
+  end
 end

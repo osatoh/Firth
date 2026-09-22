@@ -33,4 +33,11 @@
           form: { data: { turbo_confirm: t(".confirm_delete_api_key") } },
           class: "text-red-700 underline cursor-pointer" %>
   <% end %>
+
+  <div class="mt-10 border-t border-gray-200 pt-6">
+    <p class="mb-3 text-gray-700"><%= t(".delete_account_hint") %></p>
+    <%= button_to t(".delete_account"), settings_account_path, method: :delete,
+          form: { data: { turbo_confirm: t(".confirm_delete_account") } },
+          class: "rounded-md px-4 py-2 bg-red-700 text-white font-medium cursor-pointer" %>
+  </div>
 </div>

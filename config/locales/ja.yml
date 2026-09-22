@@ -82,6 +82,9 @@ ja:
       save: "保存"
       delete_api_key: "API キーを削除"
       confirm_delete_api_key: "API キーを削除しますか？"
+      delete_account: "アカウントを削除"
+      delete_account_hint: "フィード・記事・要約・API キーがすべて削除され、元に戻せません。"
+      confirm_delete_account: "アカウントと、すべてのフィード・記事・要約を完全に削除します。元に戻せません。よろしいですか？"
       languages:
         ja: "日本語"
         en: "英語"
@@ -92,6 +95,9 @@ ja:
     api_keys:
       destroy:
         notice: "API キーを削除しました。"
+    accounts:
+      destroy:
+        notice: "アカウントを削除しました。"
   articles:
     index:
       title: "記事"

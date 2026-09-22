@@ -89,4 +89,12 @@ RSpec.describe FetchFeedJob, type: :job do
       end
     end
   end
+
+  it "is discarded when its user deleted the account before it ran" do
+    serialized = described_class.new(feed).serialize
+    feed.user.destroy!
+
+    expect { ActiveJob::Base.execute(serialized) }.not_to raise_error
+    expect(WebMock).not_to have_requested(:any, //)
+  end
 end

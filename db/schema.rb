@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_150000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_160000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -58,7 +58,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_150000) do
     t.index ["google_uid"], name: "index_users_on_google_uid", unique: true
   end
 
-  add_foreign_key "articles", "feeds"
-  add_foreign_key "feeds", "users"
-  add_foreign_key "summaries", "articles"
+  add_foreign_key "articles", "feeds", on_delete: :cascade
+  add_foreign_key "feeds", "users", on_delete: :cascade
+  add_foreign_key "summaries", "articles", on_delete: :cascade
 end

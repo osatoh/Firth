@@ -2,7 +2,8 @@ class User < ApplicationRecord
   SUMMARY_LANGUAGES = %w[ja en zh ko].freeze
   ANTHROPIC_API_KEY_PREFIX = "sk-ant-".freeze
 
-  has_many :feeds, dependent: :destroy
+  # The feeds' articles and summaries go too, via ON DELETE CASCADE foreign keys.
+  has_many :feeds, dependent: :delete_all
   has_many :articles, through: :feeds
 
   encrypts :anthropic_api_key
