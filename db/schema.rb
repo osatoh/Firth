@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_160000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_170000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -20,10 +20,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_160000) do
     t.string "guid", null: false
     t.datetime "published_at"
     t.datetime "read_at"
+    t.virtual "sorted_at", type: :datetime, as: "COALESCE(published_at, created_at)", stored: true
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.string "url", null: false
     t.index ["feed_id", "guid"], name: "index_articles_on_feed_id_and_guid", unique: true
+    t.index ["feed_id", "sorted_at", "id"], name: "index_articles_on_feed_id_and_sorted_at_and_id", order: { sorted_at: :desc, id: :desc }
   end
 
   create_table "feeds", force: :cascade do |t|

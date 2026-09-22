@@ -6,8 +6,13 @@ class Article < ApplicationRecord
   validates :url, presence: true
   validates :title, presence: true
 
-  # Some feeds omit publication dates; those articles fall back to when they were fetched.
-  scope :newest_first, -> { order(Arel.sql("COALESCE(articles.published_at, articles.created_at) DESC")) }
+  # sorted_at is published_at, or the fetch time for feeds that omit dates
+  # (a generated column); id breaks ties so the order is total for paging.
+  scope :newest_first, -> { order(sorted_at: :desc, id: :desc) }
+  # Keyset page: everything after the given article in newest_first order.
+  scope :older_than, ->(article) {
+    where("(articles.sorted_at, articles.id) < (?, ?)", article.sorted_at, article.id)
+  }
 
   def read? = read_at.present?
 

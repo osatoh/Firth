@@ -128,6 +128,7 @@ ja:
       add_feed: "フィードを追加する"
       import: "OPML をインポート"
       original: "元記事"
+      older: "さらに古い記事"
     show:
       original: "元記事を開く"
       back: "記事一覧へ戻る"

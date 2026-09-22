@@ -23,5 +23,9 @@
         </li>
       <% end %>
     </ul>
+    <% if @next_cursor %>
+      <%= link_to t(".older"), articles_path(before: @next_cursor),
+            class: "mt-6 inline-block text-blue-600 hover:underline" %>
+    <% end %>
   <% end %>
 </div>

@@ -36,6 +36,41 @@ RSpec.describe "Articles", type: :request do
       expect(response.body.index("Newer Post")).to be < response.body.index("Older Post")
     end
 
+    it "pages through older articles with a cursor link" do
+      stub_const("ArticlesController::PER_PAGE", 2)
+      feed = create(:feed, user:)
+      create(:article, feed:, title: "Post C", published_at: 1.day.ago)
+      middle = create(:article, feed:, title: "Post B", published_at: 2.days.ago)
+      create(:article, feed:, title: "Post A", published_at: 3.days.ago)
+
+      get articles_path
+
+      expect(response.body).to include("Post C", "Post B")
+      expect(response.body).not_to include("Post A")
+      expect(response.body).to include(%(href="#{articles_path(before: middle.id)}"))
+
+      get articles_path(before: middle.id)
+
+      expect(response.body).to include("Post A")
+      expect(response.body).not_to include("Post B", "Post C", "?before=")
+    end
+
+    it "falls back to the fetch time for articles without a publication date" do
+      feed = create(:feed, user:)
+      create(:article, feed:, title: "Dated Post", published_at: 1.day.ago)
+      create(:article, feed:, title: "Undated Post", published_at: nil)
+
+      get articles_path
+
+      expect(response.body.index("Undated Post")).to be < response.body.index("Dated Post")
+    end
+
+    it "does not page from another user's article" do
+      get articles_path(before: create(:article).id)
+
+      expect(response).to have_http_status(:not_found)
+    end
+
     it "opens each original page through a form that marks the article read" do
       article = create(:article, feed: create(:feed, user:))
 

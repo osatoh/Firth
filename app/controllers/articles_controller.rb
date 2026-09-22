@@ -1,9 +1,17 @@
 class ArticlesController < ApplicationController
-  # A cheap stand-in for pagination until the list outgrows it.
-  LIMIT = 100
+  PER_PAGE = 50
 
+  # Keyset pagination: ?before=<id> continues after that article, so pages
+  # stay cheap and stable while new articles arrive.
   def index
-    @articles = current_user.articles.includes(:feed).newest_first.limit(LIMIT)
+    articles = current_user.articles.includes(:feed).newest_first
+    articles = articles.older_than(current_user.articles.find(params[:before])) if params[:before]
+    # One extra row tells whether an older page exists.
+    @articles = articles.limit(PER_PAGE + 1).to_a
+    if @articles.size > PER_PAGE
+      @articles.pop
+      @next_cursor = @articles.last.id
+    end
   end
 
   def show
