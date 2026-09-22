@@ -10,8 +10,7 @@ class FetchFeedJob < ApplicationJob
     parsed = Feedjira.parse(SafeHttp.get(feed.url))
     store_new_entries(feed, parsed.entries)
     feed.update!(last_fetched_at: Time.current)
-  rescue SafeHttp::Error, Feedjira::NoParserAvailable, SystemCallError, SocketError,
-         Timeout::Error, OpenSSL::SSL::SSLError, Net::HTTPBadResponse, URI::InvalidURIError => e
+  rescue *SafeHttp::FAILURES, Feedjira::NoParserAvailable => e
     # Not re-raised: the next scheduled fetch is the retry, so a broken feed
     # cannot pile up retries in the queue.
     Rails.logger.warn("Failed to fetch feed #{feed.id} (#{feed.url}): #{e.class}: #{e.message}")
