@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   # No feed page of its own: the list is the only view onto a feed.
   resources :feeds, except: :show
-  resources :articles, only: :index
+  resources :articles, only: %i[index show]
 
   root "pages#landing"
 end

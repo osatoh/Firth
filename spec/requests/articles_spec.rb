@@ -52,5 +52,42 @@ RSpec.describe "Articles", type: :request do
       expect(response.body).not_to include("Someone Else&#39;s Post")
       expect(response.body).to include("まだ記事がありません。")
     end
+
+    it "links each article to its own page" do
+      article = create(:article, feed: create(:feed, user:))
+
+      get articles_path
+
+      expect(response.body).to include(%(href="#{article_path(article)}"))
+    end
+  end
+
+  describe "GET /articles/:id" do
+    it "turns a signed-out visitor away to the landing page" do
+      get article_path(create(:article))
+
+      expect(response).to redirect_to(root_path)
+    end
+
+    context "when signed in" do
+      before { sign_in_with_google }
+
+      it "shows the title, feed, published date, and original link" do
+        article = create(:article, feed: create(:feed, user:, title: "My Blog"), title: "Hello World",
+                                   url: "https://example.com/posts/hello", published_at: Time.zone.local(2026, 9, 1, 12, 34))
+
+        get article_path(article)
+
+        expect(response).to have_http_status(:ok)
+        expect(response.body).to include("Hello World", "My Blog", "2026-09-01 12:34",
+                                         'href="https://example.com/posts/hello"')
+      end
+
+      it "returns 404 for another user's article" do
+        get article_path(create(:article))
+
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 end

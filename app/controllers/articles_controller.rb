@@ -5,4 +5,8 @@ class ArticlesController < ApplicationController
   def index
     @articles = current_user.articles.includes(:feed).newest_first.limit(LIMIT)
   end
+
+  def show
+    @article = current_user.articles.find(params[:id])
+  end
 end
