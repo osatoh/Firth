@@ -97,4 +97,30 @@ RSpec.describe Feed, type: :model do
       expect { feed.user.destroy }.to change(described_class, :count).by(-1)
     end
   end
+
+  describe "fetching" do
+    it "enqueues a fetch as soon as the feed is created" do
+      feed = create(:feed)
+
+      expect(FetchFeedJob).to have_been_enqueued.with(feed)
+    end
+
+    it "enqueues a fetch when the URL changes" do
+      feed = create(:feed, url: "https://example.com/feed.xml")
+      ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+
+      feed.update!(url: "https://example.com/other.xml")
+
+      expect(FetchFeedJob).to have_been_enqueued.with(feed)
+    end
+
+    it "does not enqueue a fetch when only the title changes" do
+      feed = create(:feed)
+      ActiveJob::Base.queue_adapter.enqueued_jobs.clear
+
+      feed.update!(title: "Renamed")
+
+      expect(FetchFeedJob).not_to have_been_enqueued
+    end
+  end
 end

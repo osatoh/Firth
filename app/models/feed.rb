@@ -7,8 +7,15 @@ class Feed < ApplicationRecord
   validate :url_must_be_http
 
   before_validation :normalize_url
+  # Fetch right away instead of waiting for the next scheduled run (spec 2.3.5).
+  # A new record's URL counts as changed, so this also covers creation.
+  after_commit :enqueue_fetch, if: :saved_change_to_url?
 
   private
+    def enqueue_fetch
+      FetchFeedJob.perform_later(self)
+    end
+
     # Fold away the differences RFC 3986 calls equivalent, so that the same
     # feed cannot be registered twice under two spellings of one URL.
     # The path is left alone: unlike the scheme and host, it is case-sensitive,
