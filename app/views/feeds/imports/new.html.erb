@@ -1,0 +1,18 @@
+<% content_for :title, t(".title") %>
+
+<div class="w-full max-w-lg">
+  <h1 class="text-2xl font-bold mb-6"><%= t(".title") %></h1>
+
+  <%= form_with url: feeds_import_path, multipart: true, class: "contents" do |form| %>
+    <p class="text-sm text-gray-500 mb-4"><%= t(".hint") %></p>
+
+    <div class="mb-6">
+      <%= form.file_field :file, accept: ".opml,.xml,text/x-opml,text/xml,application/xml", required: true, class: "block w-full" %>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <%= form.submit t(".submit"), class: "rounded-md px-4 py-2 bg-gray-900 text-white font-medium cursor-pointer" %>
+      <%= link_to t(".back"), feeds_path, class: "text-gray-700 underline" %>
+    </div>
+  <% end %>
+</div>

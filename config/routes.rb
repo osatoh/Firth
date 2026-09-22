@@ -16,6 +16,9 @@ Rails.application.routes.draw do
   delete "sign_out", to: "sessions#destroy", as: :sign_out
 
   # No feed page of its own: the list is the only view onto a feed.
+  namespace :feeds do
+    resource :import, only: %i[new create]
+  end
   resources :feeds, except: :show
   resources :articles, only: %i[index show] do
     # POST, not GET, so link prefetchers and cross-site requests cannot mark articles read.
