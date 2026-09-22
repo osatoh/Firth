@@ -30,6 +30,8 @@ ja:
         summary_language: "要約の言語"
     errors:
       models:
+        feed:
+          limit_reached: "登録できるフィードは %{count} 件までです。追加するには既存のフィードを削除してください。"
         user:
           attributes:
             anthropic_api_key:
@@ -59,6 +61,7 @@ ja:
     index:
       title: "フィード"
       new: "フィードを追加"
+      remaining: "あと %{count} 件追加できます"
       empty: "まだフィードがありません。"
       edit: "編集"
       delete: "削除"

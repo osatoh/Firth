@@ -16,6 +16,10 @@ class User < ApplicationRecord
   # Only a format check; whether the key actually works is found out when summarising.
   validates :anthropic_api_key, format: { with: /\A#{ANTHROPIC_API_KEY_PREFIX}\S+\z/, message: :anthropic_prefix }, allow_nil: true
 
+  def remaining_feed_count
+    [ Feed::LIMIT_PER_USER - feeds.count, 0 ].max
+  end
+
   # Enough to recognise which key is stored without ever showing it.
   def masked_anthropic_api_key
     "#{ANTHROPIC_API_KEY_PREFIX}…#{anthropic_api_key.last(4)}" if anthropic_api_key
