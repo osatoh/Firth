@@ -1,0 +1,21 @@
+<%# Replaced over Turbo Stream when the summary job finishes, so it must not depend on current_user. %>
+<section id="summary" class="mt-8 rounded-md border border-gray-200 p-4">
+  <h2 class="text-lg font-bold mb-3"><%= Summary.model_name.human %></h2>
+
+  <% if summary&.done? %>
+    <div class="space-y-3 break-words"><%= simple_format(h(summary.body)) %></div>
+  <% elsif summary&.pending? %>
+    <p class="text-gray-500"><%= t(".pending") %></p>
+  <% else %>
+    <% if summary %>
+      <p class="mb-3 text-red-800">
+        <%= t(summary.failure_reason, scope: "summaries.failure_reasons") %>
+        <% if summary.fixable_in_settings? %>
+          <%= link_to t(".settings"), edit_settings_path, class: "text-blue-600 hover:underline" %>
+        <% end %>
+      </p>
+    <% end %>
+    <%= button_to summary ? t(".retry") : t(".summarise"), article_summary_path(article),
+          class: "rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 cursor-pointer" %>
+  <% end %>
+</section>

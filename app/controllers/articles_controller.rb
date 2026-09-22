@@ -10,6 +10,8 @@ class ArticlesController < ApplicationController
     @article = current_user.articles.find(params[:id])
     # Turbo prefetches links on hover; only a real visit counts as reading.
     @article.mark_read! unless request.headers["X-Sec-Purpose"]&.include?("prefetch")
+    @summary_language = current_user.summary_language
+    @summary = @article.summaries.find_by(language: @summary_language)
   end
 
   # Marks the article read, then sends the browser on to its stored original URL.

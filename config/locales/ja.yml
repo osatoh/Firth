@@ -97,6 +97,14 @@ ja:
     show:
       original: "元記事を開く"
       back: "記事一覧へ戻る"
+    summary:
+      summarise: "要約する"
+      pending: "要約中…"
+      retry: "もう一度要約する"
+      settings: "設定画面へ"
+    summaries:
+      create:
+        missing_api_key: "要約するには Claude API キーを登録してください。"
   summaries:
     failure_reasons:
       blocked_address: "この記事の URL には接続できないため、要約できませんでした。"

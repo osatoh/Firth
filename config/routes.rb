@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   resources :articles, only: %i[index show] do
     # POST, not GET, so link prefetchers and cross-site requests cannot mark articles read.
     post :visit, on: :member
+    resource :summary, only: :create, module: :articles
   end
 
   resource :settings, only: %i[edit update] do

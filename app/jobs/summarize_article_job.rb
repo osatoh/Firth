@@ -31,8 +31,9 @@ class SummarizeArticleJob < ApplicationJob
   end
 
   private
-    # The single place a summary leaves pending, where 3.5 can broadcast.
+    # The single place a summary leaves pending, so the page updates live from here.
     def finish(summary, **attributes)
       summary.update!(**attributes)
+      summary.broadcast_update
     end
 end
