@@ -41,6 +41,9 @@ gem "omniauth-google-oauth2"
 # OmniAuth のリクエストフェーズを CSRF から保護する [https://github.com/cookpad/omniauth-rails_csrf_protection]
 gem "omniauth-rails_csrf_protection"
 
+# Parses RSS and Atom feeds [https://github.com/feedjira/feedjira]
+gem "feedjira", "~> 4.0"
+
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
 
@@ -62,4 +65,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+end
+
+group :test do
+  # Stubs HTTP requests so specs never hit the network [https://github.com/bblimke/webmock]
+  gem "webmock", "~> 3.26"
 end

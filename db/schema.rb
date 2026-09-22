@@ -10,12 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_16_181335) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_132437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
+  create_table "articles", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "feed_id", null: false
+    t.string "guid", null: false
+    t.datetime "published_at"
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.string "url", null: false
+    t.index ["feed_id", "guid"], name: "index_articles_on_feed_id_and_guid", unique: true
+  end
+
   create_table "feeds", force: :cascade do |t|
     t.datetime "created_at", null: false
+    t.datetime "last_fetched_at"
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.string "url", null: false
@@ -32,5 +44,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_16_181335) do
     t.index ["google_uid"], name: "index_users_on_google_uid", unique: true
   end
 
+  add_foreign_key "articles", "feeds"
   add_foreign_key "feeds", "users"
 end
