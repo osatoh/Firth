@@ -3,6 +3,7 @@ ja:
     models:
       article: "記事"
       feed: "フィード"
+      summary: "要約"
       user: "ユーザー"
     attributes:
       article:
@@ -15,6 +16,12 @@ ja:
         title: "タイトル"
         url: "RSS の URL"
         user: "ユーザー"
+      summary:
+        article: "記事"
+        body: "本文"
+        failure_reason: "失敗の理由"
+        language: "言語"
+        state: "状態"
       user:
         email: "メールアドレス"
         google_uid: "Google UID"
