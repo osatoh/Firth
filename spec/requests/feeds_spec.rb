@@ -73,7 +73,7 @@ RSpec.describe "Feeds", type: :request do
         post feeds_path, params: { feed: { title: "Example Blog", url: "https://example.com/feed.xml" } }
 
         expect(response).to have_http_status(422)
-        expect(response.body).to include("URL")
+        expect(response.body).to include("RSS の URLはすでに存在します")
       end
 
       it "rejects an invalid URL and re-renders the form" do
@@ -82,6 +82,7 @@ RSpec.describe "Feeds", type: :request do
         }.not_to change(Feed, :count)
 
         expect(response).to have_http_status(422)
+        expect(response.body).to include("RSS の URLは不正な値です")
       end
     end
 

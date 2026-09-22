@@ -23,6 +23,6 @@ class ApplicationController < ActionController::Base
     end
 
     def require_sign_in
-      redirect_to root_path, alert: "サインインしてください。" unless signed_in?
+      redirect_to root_path, alert: t("application.require_sign_in.alert") unless signed_in?
     end
 end

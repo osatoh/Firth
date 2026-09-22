@@ -1,7 +1,7 @@
 <div>
   <h1>Firth</h1>
-  <p>AI 要約付きの RSS リーダーです。</p>
+  <p><%= t(".tagline") %></p>
 
   <%# Signed-in visitors are redirected to their articles, so only the sign-in button is needed. %>
-  <%= button_to "Google でサインイン", "/auth/google_oauth2", data: { turbo: false } %>
+  <%= button_to t(".sign_in"), "/auth/google_oauth2", data: { turbo: false } %>
 </div>

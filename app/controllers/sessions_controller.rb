@@ -14,17 +14,17 @@ class SessionsController < ApplicationController
     reset_session
     session[:user_id] = user.id
 
-    redirect_to root_path, notice: "サインインしました。"
+    redirect_to root_path, notice: t(".notice")
   end
 
   def destroy
     reset_session
 
-    redirect_to root_path, notice: "サインアウトしました。"
+    redirect_to root_path, notice: t(".notice")
   end
 
   def failure
-    redirect_to root_path, alert: "サインインできませんでした。"
+    redirect_to root_path, alert: t(".alert")
   end
 
   private
