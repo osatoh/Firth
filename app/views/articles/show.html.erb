@@ -11,4 +11,7 @@
           class: "text-blue-600 hover:underline cursor-pointer" %>
     <%= link_to t(".back"), articles_path, class: "text-gray-600 hover:underline" %>
   </div>
+
+  <%= turbo_stream_from @article, :summary, @summary_language %>
+  <%= render "summary", article: @article, summary: @summary %>
 </article>

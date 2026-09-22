@@ -129,4 +129,22 @@ RSpec.describe SummarizeArticleJob, type: :job do
     expect(summary.reload.body).to eq "Earlier summary"
     expect(a_request(:any, //)).not_to have_been_made
   end
+
+  describe "live update of the article page" do
+    let(:stream) { "#{article.to_gid_param}:summary:en" }
+
+    it "replaces the summary with the finished one" do
+      stub_claude
+
+      expect { described_class.perform_now(summary) }.to have_broadcasted_to(stream)
+        .with(a_string_including('action="replace"', 'target="summary"', "Rivers bend over time."))
+    end
+
+    it "replaces the summary with a failure too" do
+      user.update!(anthropic_api_key: nil)
+
+      expect { described_class.perform_now(summary) }.to have_broadcasted_to(stream)
+        .with(a_string_including(I18n.t("summaries.failure_reasons.missing_api_key")))
+    end
+  end
 end
