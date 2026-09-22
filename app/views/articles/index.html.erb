@@ -1,0 +1,24 @@
+<% content_for :title, t(".title") %>
+
+<div class="w-full">
+  <h1 class="text-2xl font-bold mb-6"><%= t(".title") %></h1>
+
+  <% if @articles.empty? %>
+    <p class="text-gray-500"><%= t(".empty") %></p>
+  <% else %>
+    <ul class="divide-y divide-gray-200">
+      <% @articles.each do |article| %>
+        <li class="py-4 min-w-0">
+          <%= link_to article.title, article.url, target: "_blank", rel: "noopener noreferrer",
+                class: "font-medium hover:underline" %>
+          <p class="text-sm text-gray-500">
+            <%= article.feed.title %>
+            <% if article.published_at %>
+              · <%= l(article.published_at, format: :article) %>
+            <% end %>
+          </p>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+</div>

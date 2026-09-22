@@ -24,6 +24,13 @@
   </head>
 
   <body>
+    <% if signed_in? %>
+      <nav class="container mx-auto px-5 py-4 flex items-center gap-4">
+        <%= link_to t("nav.articles"), articles_path, class: "text-gray-700 underline" %>
+        <%= link_to t("nav.feeds"), feeds_path, class: "text-gray-700 underline" %>
+        <%= button_to t("nav.sign_out"), sign_out_path, method: :delete, class: "text-gray-700 underline" %>
+      </nav>
+    <% end %>
     <main class="container mx-auto mt-28 px-5 flex flex-col">
       <% if notice.present? %>
         <p class="mb-6 rounded-md bg-green-50 px-4 py-3 text-green-800"><%= notice %></p>
