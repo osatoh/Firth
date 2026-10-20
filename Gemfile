@@ -71,5 +71,5 @@ end
 
 group :test do
   # Stubs HTTP requests so specs never hit the network [https://github.com/bblimke/webmock]
-  gem "webmock", "~> 3.26"
+  gem "webmock", "~> 3.34"
 end
